@@ -4,21 +4,18 @@ piece_id = "P" + str (1)
 """ Variável que armazena o id da peça, iniciando em 1."""
 
 def register_piece ():
-    # Função que registra as informações da peça, incluindo peso, cor e comprimento.
+  """ Função que registra as informações da peça, incluindo peso, cor e comprimento."""
    
-   weight = float (input("Digite o peso: "))
-    # Variável que armazena o peso da peça
+  weight = float (input("Digite o peso: "))
+   # Variável que armazena o peso da peça
    
-   color = input ("Digite a cor da peça: ").lower ()
-    # Variável que armazena a cor da peça
+  color = input ("Digite a cor da peça: ").lower ()
+   # Variável que armazena a cor da peça
    
-   length = float (input("Digite o comprimento da peça: "))
+  length = float (input("Digite o comprimento da peça: "))
     # Variável que armazena o comprimento da peça
 
-   return weight, color, length
-
-weight, color, length = register_piece ()
-
+  return weight, color, length
 
 def check_weight (weight):
   """ Função que verifica se o peso da peça está dentro do intervalo permitido (95 a 105). """
@@ -68,19 +65,105 @@ def get_rejection_reasons (weight, color, length):
    
     return rejection_reasons
 
-rejection_reasons = get_rejection_reasons (weight, color, length)
+def create_piece (piece_id):
+  """ Função que cria a peça, chamando a função de registro de peça. """
 
-piece = {
-   #Dicionário que armazena as informações da peça, incluindo id, peso, cor, comprimento e status (aprovada ou reprovada). 
+  weight, color, length = register_piece()
+  
+  rejection_reasons = get_rejection_reasons (weight, color, length)
+
+  status = check_all (weight, color, length)
    
+  piece = {
+    #Dicionário que armazena as informações da peça, incluindo id, peso, cor, comprimento e status (aprovada ou reprovada). 
+    
+    "id": piece_id,
+    "weight": weight,
+    "color": color,
+    "length": length,
+    "status": status,
+    "rejection_reasons": rejection_reasons
+  }
 
-   "id": piece_id,
-   "weight": weight,
-   "color": color,
-   "length": length,
-   "status": check_all (weight, color, length),
-   "rejection_reasons": rejection_reasons
-}
+  return piece
+
+def store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity):
+  """Função que armazena as informações da peças no local correto"""
+  
+  if piece["status"] == "Peça Aprovada":
+
+    approved_pieces.append(piece)
+
+    current_box.append(piece)
+
+    if len(current_box) == box_capacity:
+        boxes.append(current_box)
+        
+        current_box = []
+
+  else:
+    reproved_pieces.append(piece)
+
+  return current_box
+
+def list_pieces (approved_pieces, reproved_pieces):
+  """Função que listará todas as peças aprovadas e reprovadas"""
+
+  print ("\n--- Peças Aprovadas ---")
+  
+  if not approved_pieces:
+    print("Não há peças aprovadas")
+  else:  
+
+    for piece in approved_pieces:
+
+      print (f"Id: {piece['id']}")
+      print (f"Peso: {piece['weight']}")
+      print (f"Cor: {piece['color']}")
+      print (f"Comprimento: {piece['length']}")
+      print ()
+
+  print ("\n--- Peças Reprovadas ---")
+
+  if not reproved_pieces:
+      print ("Não há peças reprovadas")
+  
+  else:
+    for piece in reproved_pieces:
+
+      print (f"Id: {piece['id']}")
+      print (f"Peso: {piece['weight']}")
+      print (f"Cor: {piece['color']}")
+      print (f"Comprimento: {piece['length']}")
+      print (f"Motivo de Rejeição: {piece['rejection_reasons']}")
+
+def list_boxes (boxes, current_box):
+  """Função que listará todas as caixas completas."""
+  
+  print ("\n--- Caixas Completas ---")
+
+  if not boxes:
+
+    print("Não Possui nenhuma caixa fechada")
+
+  else:
+    for box_number, boxes in enumerate (boxes, start = 1):
+      print (f"\nCaixa {box_number}")
+      print (f"Quantidade de peças: {len(boxes)}")
+
+      for piece in boxes:
+        print(f"- {piece['id']}")
+
+  print ("\n --- Caixas Incompleta ---")
+
+  if not current_box:
+    print ("Não possui nenhuma caixa incompleta")
+  
+  else:
+    for piece in current_box:
+      print (f"- {piece['id']}")
+
+
 
 approved_pieces = []
 """ Lista que armazena as peças aprovadas. """
@@ -94,61 +177,36 @@ boxes = []
 current_box = []
 """ Lista que armazena a caixa que ainda não está fechada. """
 
-box_capacity = 10
+box_capacity = 2
 """ Variável que armazena a capacidade máxima de peças por caixa. """
 
+#Chamando as funcões create_piece e current_box
+piece = create_piece (piece_id)
 
-# Verifica se a peça está aprovada ou reprovada e adiciona à lista correspondente. 
-if check_all (weight, color, length) == "Peça Aprovada":
-    
-    approved_pieces.append(piece)
-    current_box.append(piece)
- 
-    if len(current_box) == box_capacity:
-       boxes.append(current_box)
-       current_box = []
-else:
-    reproved_pieces.append(piece)
+current_box = store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity)
 
-print (f"Motivos de rejeição: {rejection_reasons}")
-print (f"Peças aprovadas: {approved_pieces}")
-print (f"Peças reprovadas: {reproved_pieces}")
+list_pieces(approved_pieces, reproved_pieces)
+list_boxes (boxes, current_box)
 
+# Criando laço de repetição enquanto a resposta for "s"
 repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()
-""" Loop que permite cadastrar várias peças, enquanto o usuário desejar. """
 
 while repeat == "s":
 
-    piece_id = "P" + str (int (piece_id[1:]) + 1)
-    
-    weight, color, length = register_piece ()
+  piece_id = "P" + str (int (piece_id[1:]) + 1)
+  
+  piece = create_piece (piece_id)
 
-    rejection_reasons = get_rejection_reasons(weight, color, length)  
-    
-    piece = {
-        "id": piece_id,
-        "weight": weight,
-        "color": color,
-        "length": length,
-        "status": check_all (weight, color, length),
-        "rejection_reasons": rejection_reasons
-    }
+  current_box = store_piece (
+  piece, 
+  current_box, 
+  approved_pieces, 
+  reproved_pieces, 
+  boxes, 
+  box_capacity
+  )
 
-    if check_all (weight, color, length) == "Peça Aprovada":
-        
-        approved_pieces.append (piece)
-        current_box.append (piece)
+  list_pieces(approved_pieces, reproved_pieces)
+  list_boxes(boxes, current_box)
 
-        if len (current_box) == box_capacity:
-           boxes.append(current_box)
-           current_box = []
-
-    else:
-        reproved_pieces.append (piece)
-
-    print (f"Motivos de rejeição: {rejection_reasons}")
-    print (f"Peças aprovadas: {approved_pieces}")
-    print (f"Peças reprovadas: {reproved_pieces}")
-    print (f"Caixas fechadas: {boxes}")
-    print (f"Caixa atual: {current_box}")
-    repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()  
+  repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()  
