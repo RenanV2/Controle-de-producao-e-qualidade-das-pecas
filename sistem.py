@@ -144,14 +144,14 @@ def list_boxes (boxes, current_box):
 
   if not boxes:
 
-    print("Não Possui nenhuma caixa fechada")
+    print ("Não Possui nenhuma caixa fechada")
 
   else:
-    for box_number, boxes in enumerate (boxes, start = 1):
+    for box_number, box in enumerate (boxes, start = 1):
       print (f"\nCaixa {box_number}")
-      print (f"Quantidade de peças: {len(boxes)}")
+      print (f"Quantidade de peças: {len(box)}")
 
-      for piece in boxes:
+      for piece in box:
         print(f"- {piece['id']}")
 
   print ("\n --- Caixas Incompleta ---")
@@ -163,8 +163,55 @@ def list_boxes (boxes, current_box):
     for piece in current_box:
       print (f"- {piece['id']}")
 
+def remove_pieces (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity):
+  
+  for piece in approved_pieces:
 
+    if piece ["id"] == piece_id:
 
+      approved_pieces.remove (piece)
+
+      if piece in current_box :
+
+        current_box.remove (piece)
+
+      else:
+
+        for box in boxes:
+
+          if piece in box:
+
+            box.remove (piece)
+
+            boxes.remove (box)
+
+            current_box.extend (box)
+
+            if len (current_box) >= box_capacity:
+
+              boxes.append (current_box[:box_capacity])
+              del current_box[:box_capacity]
+
+            break
+
+      print (f"Sua peça {piece['id']} foi removida com sucesso")
+
+      return True
+
+  for piece in reproved_pieces:
+
+    if piece ["id"] == piece_id:
+
+      reproved_pieces.remove (piece)
+
+      print (f"Sua peça {piece['id']} foi removida com sucesso")
+
+      return True
+
+  print ("Sua peça não foi removida verifique se existe a peça escolhida e tente novamente")
+  
+  return False 
+    
 approved_pieces = []
 """ Lista que armazena as peças aprovadas. """
 
@@ -194,6 +241,20 @@ repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()
 while repeat == "s":
 
   piece_id = "P" + str (int (piece_id[1:]) + 1)
+
+  want_to_remove = input ("Você deseja remover alguma peça? ").lower()
+
+  if want_to_remove == "s":
+
+    piece_id_to_remove = input ("Digite o ID da peça que deseja remover: ").upper()
+
+    removed = remove_pieces (piece_id_to_remove, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+
+    
+    if removed:
+          print ("Peça removida com sucesso.")
+    else: ("Peça não encontrada.")
+
   
   piece = create_piece (piece_id)
 
@@ -209,4 +270,4 @@ while repeat == "s":
   list_pieces(approved_pieces, reproved_pieces)
   list_boxes(boxes, current_box)
 
-  repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()  
+  repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower () 
