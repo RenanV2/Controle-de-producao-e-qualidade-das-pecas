@@ -1,6 +1,46 @@
 # Início
 
+import json
+
 piece_id = "P1"
+
+
+def save_data (
+    approved_pieces,
+    reproved_pieces,
+    current_box,
+    boxes,
+    piece_id
+):
+    """Salva os dados atuais do sistema em um arquivo JSON."""
+    
+    data = {
+        "approved_pieces": approved_pieces,
+        "reproved_pieces": reproved_pieces,
+        "boxes": boxes,
+        "current_box": current_box,
+        "piece_id": piece_id
+    }
+
+    with open("data.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+
+def load_data():
+    try:
+        with open("data.json", "r") as file:
+            data = json.load(file)
+
+        return (
+            data["approved_pieces"],
+            data["reproved_pieces"],
+            data["boxes"],
+            data["current_box"],
+            data["piece_id"]
+        )
+
+    except FileNotFoundError:
+        return [], [], [], [], "P1"
 
 
 def register_piece():
@@ -243,13 +283,7 @@ def remove_pieces(
     return False
 
 
-approved_pieces = []
-
-reproved_pieces = []
-
-boxes = []
-
-current_box = []
+approved_pieces, reproved_pieces, boxes, current_box, piece_id = load_data()
 
 box_capacity = 10
 
@@ -353,6 +387,14 @@ def show_menu(
 
             piece_id = "P" + str(int(piece_id[1:]) + 1)
 
+            save_data(
+                approved_pieces,
+                reproved_pieces,
+                current_box,
+                boxes,
+                piece_id
+            )
+
         elif selected_option == 2:
 
             list_pieces(
@@ -366,7 +408,7 @@ def show_menu(
                 "Digite o ID da peça que deseja remover: "
             ).upper()
 
-            remove_pieces(
+            removed = remove_pieces(
                 piece_id_to_remove,
                 approved_pieces,
                 reproved_pieces,
@@ -374,6 +416,15 @@ def show_menu(
                 boxes,
                 box_capacity
             )
+
+            if removed:
+              save_data(
+                approved_pieces,
+                reproved_pieces,
+                current_box,
+                boxes,
+                piece_id
+              )
 
         elif selected_option == 4:
 
