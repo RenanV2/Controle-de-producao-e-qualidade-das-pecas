@@ -1,5 +1,6 @@
 # Inicio
 
+
 piece_id = "P" + str (1)
 """ Variável que armazena o id da peça, iniciando em 1."""
 
@@ -164,7 +165,7 @@ def list_boxes (boxes, current_box):
       print (f"- {piece['id']}")
 
 def remove_pieces (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity):
-  
+
   for piece in approved_pieces:
 
     if piece ["id"] == piece_id:
@@ -211,7 +212,7 @@ def remove_pieces (piece_id, approved_pieces, reproved_pieces, current_box, boxe
   print ("Sua peça não foi removida verifique se existe a peça escolhida e tente novamente")
   
   return False 
-    
+
 approved_pieces = []
 """ Lista que armazena as peças aprovadas. """
 
@@ -227,47 +228,99 @@ current_box = []
 box_capacity = 2
 """ Variável que armazena a capacidade máxima de peças por caixa. """
 
-#Chamando as funcões create_piece e current_box
-piece = create_piece (piece_id)
+# Chamando as funcões create_piece e current_box
+#piece = create_piece (piece_id)
+#current_box = store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity)
 
-current_box = store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity)
+def show_menu (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity):
 
-list_pieces(approved_pieces, reproved_pieces)
-list_boxes (boxes, current_box)
+  chose_option = -1
 
-# Criando laço de repetição enquanto a resposta for "s"
-repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()
+  while chose_option != 0:
 
-while repeat == "s":
+    print ("\n --- Controle de qualidade ---" \
+    "\n\n 1 - Cadastrar nova peça " \
+    "\n 2 - Listar peças aprovadas/reprovadas" \
+    "\n 3 - Remover peça cadastrada" \
+    "\n 4 - Listar caixas fechadas" \
+    "\n 5 - Gerar relatório final" \
+    "\n 0 - Sair ")
 
-  piece_id = "P" + str (int (piece_id[1:]) + 1)
+    chose_option = int (input ("\n Escolha uma opção: "))
 
-  want_to_remove = input ("Você deseja remover alguma peça? ").lower()
+    if chose_option == 1:
 
-  if want_to_remove == "s":
+      piece = create_piece (piece_id)
 
-    piece_id_to_remove = input ("Digite o ID da peça que deseja remover: ").upper()
+      current_box = store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity)
 
-    removed = remove_pieces (piece_id_to_remove, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+      piece_id = "P" + str (int (piece_id[1:]) + 1)
+
+    elif chose_option == 2:
+
+      list_pieces (approved_pieces, reproved_pieces)
+
+    elif chose_option == 3:
+
+      piece_id_to_remove = input ("Digite o ID da peça que deseja remover: ").upper()
+
+      removed = remove_pieces (piece_id_to_remove, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+
+    elif chose_option == 4:
+
+      list_boxes (boxes, current_box)
+
+    elif chose_option == 5:
+
+      ()
+
+    elif chose_option == 0:
+
+      print("Programa encerrado.")
+
+    else:
+
+      print ("\n Opção Inválida")
+
+
+show_menu (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+
+# list_pieces(approved_pieces, reproved_pieces)
+# list_boxes (boxes, current_box)
+
+# # Criando laço de repetição enquanto a resposta for "s"
+# repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()
+
+# while repeat == "s":
+
+#   piece_id = "P" + str (int (piece_id[1:]) + 1)
+
+#   want_to_remove = input ("Você deseja remover alguma peça? ").lower()
+
+#   if want_to_remove == "s":
+
+#     piece_id_to_remove = input ("Digite o ID da peça que deseja remover: ").upper()
+
+#     removed = remove_pieces (piece_id_to_remove, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
 
     
-    if removed:
-          print ("Peça removida com sucesso.")
-    else: ("Peça não encontrada.")
+#     if removed:
+#           print ("Peça removida com sucesso.")
+#     else: ("Peça não encontrada.")
 
   
-  piece = create_piece (piece_id)
+#   piece = create_piece (piece_id)
 
-  current_box = store_piece (
-  piece, 
-  current_box, 
-  approved_pieces, 
-  reproved_pieces, 
-  boxes, 
-  box_capacity
-  )
+#   current_box = store_piece (
+#   piece, 
+#   current_box, 
+#   approved_pieces, 
+#   reproved_pieces, 
+#   boxes, 
+#   box_capacity
+#   )
 
-  list_pieces(approved_pieces, reproved_pieces)
-  list_boxes(boxes, current_box)
+#   list_pieces(approved_pieces, reproved_pieces)
+#   list_boxes(boxes, current_box)
 
-  repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower () 
+#   repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower () 
