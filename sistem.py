@@ -1,326 +1,410 @@
-# Inicio
+# Início
+
+piece_id = "P1"
 
 
-piece_id = "P" + str (1)
-""" Variável que armazena o id da peça, iniciando em 1."""
+def register_piece():
+    """Registra o peso, a cor e o comprimento da peça."""
 
-def register_piece ():
-  """ Função que registra as informações da peça, incluindo peso, cor e comprimento."""
-   
-  weight = float (input("Digite o peso: "))
-   # Variável que armazena o peso da peça
-   
-  color = input ("Digite a cor da peça: ").lower ()
-   # Variável que armazena a cor da peça
-   
-  length = float (input("Digite o comprimento da peça: "))
-    # Variável que armazena o comprimento da peça
+    weight = float(input("Digite o peso: "))
 
-  return weight, color, length
+    color = input("Digite a cor da peça: ").lower()
 
-def check_weight (weight):
-  """ Função que verifica se o peso da peça está dentro do intervalo permitido (95 a 105). """
+    length = float(input("Digite o comprimento da peça: "))
 
-  if 95 <= weight <= 105:
-    return True
-  else:
-      return "Peso fora do intervalo"
-  
-def check_color (color):
-    """ Função que verifica se a cor da peça está dentro do intervalo permitido (azul ou verde). """
+    return weight, color, length
+
+
+def check_weight(weight):
+    """Verifica se o peso está dentro do intervalo permitido."""
+
+    if 95 <= weight <= 105:
+        return True
+    else:
+        return "Peso fora do intervalo"
+
+
+def check_color(color):
+    """Verifica se a cor está dentro das opções permitidas."""
 
     if color == "azul" or color == "verde":
-     return True
+        return True
     else:
         return "Cor fora do intervalo"
 
-def check_length (length):
-  """ Função que verifica se o comprimento da peça está dentro do intervalo permitido (10 a 20). """
 
-  if 10 <= length <= 20:
-    return True
-  else:
-     return "Comprimento fora do intervalo"
+def check_length(length):
+    """Verifica se o comprimento está dentro do intervalo permitido."""
 
-def check_all (weight, color, length):
-  """ Função que verifica se a peça está aprovada ou reprovada, passando pelas funções de verificação de peso, cor e comprimento. """
+    if 10 <= length <= 20:
+        return True
+    else:
+        return "Comprimento fora do intervalo"
 
-  if check_weight (weight) == True and check_color (color) == True and check_length (length) == True:
-    return "Peça Aprovada"
-  else:
-    return "Peça Reprovada"
- 
-def get_rejection_reasons (weight, color, length):
-    """ Função que verifica se a peça tem algum motivo de rejeição. Caso haja, ele é adicionado à lista de motivos de rejeição. """
+
+def check_all(weight, color, length):
+    """Verifica se a peça foi aprovada ou reprovada."""
+
+    if (
+        check_weight(weight) is True
+        and check_color(color) is True
+        and check_length(length) is True
+    ):
+        return "Peça Aprovada"
+    else:
+        return "Peça Reprovada"
+
+
+def get_rejection_reasons(weight, color, length):
+    """Identifica e armazena os motivos de rejeição da peça."""
 
     rejection_reasons = []
 
-    if check_weight (weight) is not True:
-      rejection_reasons.append (check_weight (weight))
+    if check_weight(weight) is not True:
+        rejection_reasons.append(check_weight(weight))
 
-    if check_color (color) is not True:
-      rejection_reasons.append (check_color (color))
+    if check_color(color) is not True:
+        rejection_reasons.append(check_color(color))
 
-    if check_length (length) is not True:
-      rejection_reasons.append (check_length (length))
-   
+    if check_length(length) is not True:
+        rejection_reasons.append(check_length(length))
+
     return rejection_reasons
 
-def create_piece (piece_id):
-  """ Função que cria a peça, chamando a função de registro de peça. """
 
-  weight, color, length = register_piece()
-  
-  rejection_reasons = get_rejection_reasons (weight, color, length)
+def create_piece(piece_id):
+    """Cria uma peça com seus dados, status e motivos de rejeição."""
 
-  status = check_all (weight, color, length)
-   
-  piece = {
-    #Dicionário que armazena as informações da peça, incluindo id, peso, cor, comprimento e status (aprovada ou reprovada). 
-    
-    "id": piece_id,
-    "weight": weight,
-    "color": color,
-    "length": length,
-    "status": status,
-    "rejection_reasons": rejection_reasons
-  }
+    weight, color, length = register_piece()
 
-  return piece
+    rejection_reasons = get_rejection_reasons(
+        weight,
+        color,
+        length
+    )
 
-def store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity):
-  """Função que armazena as informações da peças no local correto"""
-  
-  if piece["status"] == "Peça Aprovada":
+    status = check_all(weight, color, length)
 
-    approved_pieces.append(piece)
+    piece = {
+        "id": piece_id,
+        "weight": weight,
+        "color": color,
+        "length": length,
+        "status": status,
+        "rejection_reasons": rejection_reasons
+    }
 
-    current_box.append(piece)
+    return piece
 
-    if len(current_box) == box_capacity:
-        boxes.append(current_box)
-        
-        current_box = []
 
-  else:
-    reproved_pieces.append(piece)
+def store_piece(
+    piece,
+    current_box,
+    approved_pieces,
+    reproved_pieces,
+    boxes,
+    box_capacity
+):
+    """Armazena a peça na lista correspondente e controla as caixas."""
 
-  return current_box
+    if piece["status"] == "Peça Aprovada":
 
-def list_pieces (approved_pieces, reproved_pieces):
-  """Função que listará todas as peças aprovadas e reprovadas"""
+        approved_pieces.append(piece)
 
-  print ("\n--- Peças Aprovadas ---")
-  
-  if not approved_pieces:
-    print("Não há peças aprovadas")
-  else:  
+        current_box.append(piece)
+
+        if len(current_box) == box_capacity:
+            boxes.append(current_box)
+
+            current_box = []
+
+    else:
+        reproved_pieces.append(piece)
+
+    return current_box
+
+
+def list_pieces(approved_pieces, reproved_pieces):
+    """Lista todas as peças aprovadas e reprovadas."""
+
+    print("\n--- Peças Aprovadas ---\n")
+
+    if not approved_pieces:
+        print("Não há peças aprovadas.")
+    else:
+        for piece in approved_pieces:
+            print(f"ID: {piece['id']}")
+            print(f"Peso: {piece['weight']}")
+            print(f"Cor: {piece['color']}")
+            print(f"Comprimento: {piece['length']}")
+            print()
+
+    print("\n--- Peças Reprovadas ---\n")
+
+    if not reproved_pieces:
+        print("Não há peças reprovadas.")
+    else:
+        for piece in reproved_pieces:
+            print(f"ID: {piece['id']}")
+            print(f"Peso: {piece['weight']}")
+            print(f"Cor: {piece['color']}")
+            print(f"Comprimento: {piece['length']}")
+            print(f"Motivo de rejeição: {piece['rejection_reasons']}")
+            print()
+
+
+def list_boxes(boxes, current_box):
+    """Lista as caixas fechadas e a caixa que está incompleta."""
+
+    print("\n--- Caixas Completas ---\n")
+
+    if not boxes:
+        print("Não possui nenhuma caixa fechada.")
+    else:
+        for box_number, box in enumerate(boxes, start=1):
+            print(f"\nCaixa {box_number}")
+            print(f"Quantidade de peças: {len(box)}")
+
+            for piece in box:
+                print(f"- {piece['id']}")
+
+    print("\n--- Caixa Incompleta ---\n")
+
+    if not current_box:
+        print("Não possui nenhuma caixa incompleta.")
+    else:
+        print(f"Quantidade de peças: {len(current_box)}")
+
+        for piece in current_box:
+            print(f"- {piece['id']}")
+
+
+def remove_pieces(
+    piece_id,
+    approved_pieces,
+    reproved_pieces,
+    current_box,
+    boxes,
+    box_capacity
+):
+    """Remove uma peça e reorganiza as caixas quando necessário."""
 
     for piece in approved_pieces:
 
-      print (f"Id: {piece['id']}")
-      print (f"Peso: {piece['weight']}")
-      print (f"Cor: {piece['color']}")
-      print (f"Comprimento: {piece['length']}")
-      print ()
+        if piece["id"] == piece_id:
 
-  print ("\n--- Peças Reprovadas ---")
+            approved_pieces.remove(piece)
 
-  if not reproved_pieces:
-      print ("Não há peças reprovadas")
-  
-  else:
+            if piece in current_box:
+
+                current_box.remove(piece)
+
+            else:
+
+                for box in boxes:
+
+                    if piece in box:
+
+                        box.remove(piece)
+
+                        boxes.remove(box)
+
+                        current_box.extend(box)
+
+                        if len(current_box) >= box_capacity:
+                            boxes.append(current_box[:box_capacity])
+                            del current_box[:box_capacity]
+
+                        break
+
+            print(
+                f"Sua peça {piece['id']} foi removida com sucesso."
+            )
+
+            return True
+
     for piece in reproved_pieces:
 
-      print (f"Id: {piece['id']}")
-      print (f"Peso: {piece['weight']}")
-      print (f"Cor: {piece['color']}")
-      print (f"Comprimento: {piece['length']}")
-      print (f"Motivo de Rejeição: {piece['rejection_reasons']}")
+        if piece["id"] == piece_id:
 
-def list_boxes (boxes, current_box):
-  """Função que listará todas as caixas completas."""
-  
-  print ("\n--- Caixas Completas ---")
+            reproved_pieces.remove(piece)
 
-  if not boxes:
+            print(
+                f"Sua peça {piece['id']} foi removida com sucesso."
+            )
 
-    print ("Não Possui nenhuma caixa fechada")
+            return True
 
-  else:
-    for box_number, box in enumerate (boxes, start = 1):
-      print (f"\nCaixa {box_number}")
-      print (f"Quantidade de peças: {len(box)}")
+    print(
+        "Sua peça não foi removida. "
+        "Verifique se o ID informado existe e tente novamente."
+    )
 
-      for piece in box:
-        print(f"- {piece['id']}")
+    return False
 
-  print ("\n --- Caixas Incompleta ---")
-
-  if not current_box:
-    print ("Não possui nenhuma caixa incompleta")
-  
-  else:
-    for piece in current_box:
-      print (f"- {piece['id']}")
-
-def remove_pieces (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity):
-
-  for piece in approved_pieces:
-
-    if piece ["id"] == piece_id:
-
-      approved_pieces.remove (piece)
-
-      if piece in current_box :
-
-        current_box.remove (piece)
-
-      else:
-
-        for box in boxes:
-
-          if piece in box:
-
-            box.remove (piece)
-
-            boxes.remove (box)
-
-            current_box.extend (box)
-
-            if len (current_box) >= box_capacity:
-
-              boxes.append (current_box[:box_capacity])
-              del current_box[:box_capacity]
-
-            break
-
-      print (f"Sua peça {piece['id']} foi removida com sucesso")
-
-      return True
-
-  for piece in reproved_pieces:
-
-    if piece ["id"] == piece_id:
-
-      reproved_pieces.remove (piece)
-
-      print (f"Sua peça {piece['id']} foi removida com sucesso")
-
-      return True
-
-  print ("Sua peça não foi removida verifique se existe a peça escolhida e tente novamente")
-  
-  return False 
 
 approved_pieces = []
-""" Lista que armazena as peças aprovadas. """
 
 reproved_pieces = []
-"""" Lista que armazena as peças reprovadas. """
 
 boxes = []
-""" Lista que armazena apenas as caixas fechadas. """
 
 current_box = []
-""" Lista que armazena a caixa que ainda não está fechada. """
 
-box_capacity = 2
-""" Variável que armazena a capacidade máxima de peças por caixa. """
+box_capacity = 10
 
-# Chamando as funcões create_piece e current_box
-#piece = create_piece (piece_id)
-#current_box = store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity)
 
-def show_menu (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity):
+def generate_report(
+    approved_pieces,
+    reproved_pieces,
+    current_box,
+    boxes
+):
+    """Gera o relatório final do sistema."""
 
-  chose_option = -1
+    print("\n=== Relatório Final ===\n")
 
-  while chose_option != 0:
+    total_approved = len(approved_pieces)
+    total_reproved = len(reproved_pieces)
 
-    print ("\n --- Controle de qualidade ---" \
-    "\n\n 1 - Cadastrar nova peça " \
-    "\n 2 - Listar peças aprovadas/reprovadas" \
-    "\n 3 - Remover peça cadastrada" \
-    "\n 4 - Listar caixas fechadas" \
-    "\n 5 - Gerar relatório final" \
-    "\n 0 - Sair ")
+    print(
+        f"Quantidade de peças aprovadas: {total_approved}\n"
+        f"Quantidade de peças reprovadas: {total_reproved}"
+    )
 
-    chose_option = int (input ("\n Escolha uma opção: "))
+    print("\n--- Motivos de Reprovação ---\n")
 
-    if chose_option == 1:
+    if total_reproved:
 
-      piece = create_piece (piece_id)
+        for piece in reproved_pieces:
 
-      current_box = store_piece (piece, current_box, approved_pieces, reproved_pieces, boxes, box_capacity)
+            print(f"\n{piece['id']}:")
 
-      piece_id = "P" + str (int (piece_id[1:]) + 1)
+            for reason in piece["rejection_reasons"]:
+                print(f"- {reason}")
 
-    elif chose_option == 2:
+    else:
+        print("Não existem peças reprovadas.")
 
-      list_pieces (approved_pieces, reproved_pieces)
+    print("\n--- Caixas Utilizadas ---\n")
 
-    elif chose_option == 3:
+    total_box = len(boxes)
 
-      piece_id_to_remove = input ("Digite o ID da peça que deseja remover: ").upper()
+    if current_box:
 
-      removed = remove_pieces (piece_id_to_remove, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+        # A caixa incompleta também é considerada uma caixa utilizada.
+        total_box += 1
 
-    elif chose_option == 4:
-
-      list_boxes (boxes, current_box)
-
-    elif chose_option == 5:
-
-      ()
-
-    elif chose_option == 0:
-
-      print("Programa encerrado.")
+        print(
+            f"Quantidade de caixas utilizadas: {total_box}\n"
+            f"Caixas fechadas: {total_box - 1}\n"
+            f"Caixa incompleta: 1"
+        )
 
     else:
 
-      print ("\n Opção Inválida")
+        print(
+            f"Quantidade de caixas utilizadas: {total_box}\n"
+            f"Caixas fechadas: {total_box}\n"
+            f"Caixa incompleta: 0"
+        )
 
 
-show_menu (piece_id, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+def show_menu(
+    piece_id,
+    approved_pieces,
+    reproved_pieces,
+    current_box,
+    boxes,
+    box_capacity
+):
+    """Exibe o menu e controla o fluxo principal do sistema."""
 
-# list_pieces(approved_pieces, reproved_pieces)
-# list_boxes (boxes, current_box)
+    selected_option = -1
 
-# # Criando laço de repetição enquanto a resposta for "s"
-# repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower ()
+    while selected_option != 0:
 
-# while repeat == "s":
+        print(
+            "\n=== Controle de Qualidade ==="
+            "\n\n1 - Cadastrar nova peça"
+            "\n2 - Listar peças aprovadas/reprovadas"
+            "\n3 - Remover peça cadastrada"
+            "\n4 - Listar caixas fechadas"
+            "\n5 - Gerar relatório final"
+            "\n0 - Sair"
+        )
 
-#   piece_id = "P" + str (int (piece_id[1:]) + 1)
+        selected_option = int(
+            input("\nEscolha uma opção: ")
+        )
 
-#   want_to_remove = input ("Você deseja remover alguma peça? ").lower()
+        if selected_option == 1:
 
-#   if want_to_remove == "s":
+            piece = create_piece(piece_id)
 
-#     piece_id_to_remove = input ("Digite o ID da peça que deseja remover: ").upper()
+            current_box = store_piece(
+                piece,
+                current_box,
+                approved_pieces,
+                reproved_pieces,
+                boxes,
+                box_capacity
+            )
 
-#     removed = remove_pieces (piece_id_to_remove, approved_pieces, reproved_pieces, current_box, boxes, box_capacity)
+            piece_id = "P" + str(int(piece_id[1:]) + 1)
 
-    
-#     if removed:
-#           print ("Peça removida com sucesso.")
-#     else: ("Peça não encontrada.")
+        elif selected_option == 2:
 
-  
-#   piece = create_piece (piece_id)
+            list_pieces(
+                approved_pieces,
+                reproved_pieces
+            )
 
-#   current_box = store_piece (
-#   piece, 
-#   current_box, 
-#   approved_pieces, 
-#   reproved_pieces, 
-#   boxes, 
-#   box_capacity
-#   )
+        elif selected_option == 3:
 
-#   list_pieces(approved_pieces, reproved_pieces)
-#   list_boxes(boxes, current_box)
+            piece_id_to_remove = input(
+                "Digite o ID da peça que deseja remover: "
+            ).upper()
 
-#   repeat = input ("Deseja cadastrar outra peça? (s/n): ").lower () 
+            remove_pieces(
+                piece_id_to_remove,
+                approved_pieces,
+                reproved_pieces,
+                current_box,
+                boxes,
+                box_capacity
+            )
+
+        elif selected_option == 4:
+
+            list_boxes(
+                boxes,
+                current_box
+            )
+
+        elif selected_option == 5:
+
+            generate_report(
+                approved_pieces,
+                reproved_pieces,
+                current_box,
+                boxes
+            )
+
+        elif selected_option == 0:
+
+            print("\nPrograma encerrado.")
+
+        else:
+
+            print("\nOpção inválida.")
+
+
+show_menu(
+    piece_id,
+    approved_pieces,
+    reproved_pieces,
+    current_box,
+    boxes,
+    box_capacity
+)
